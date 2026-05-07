@@ -1,0 +1,99 @@
+\documentclass[packages]{combine}
+%,colclass=a4paper
+%\documentclass[a4paper]{article}
+
+%\usepackage[a4paper, top=8mm, bottom=8mm, left=8mm, right=8mm]{geometry}
+
+%\usepackage{polyglossia}
+%\setdefaultlanguage[babelshorthands=true]{russian}
+%\setotherlanguage{english}
+
+%\usepackage{fontspec}
+%\setmainfont{FreeSerif}
+%\newfontfamily{\russianfonttt}[Scale=0.7]{DejaVuSansMono}
+
+%\usepackage[tiny, compact]{titlesec}
+
+%\usepackage{titling}
+%\setlength{\droptitle}{-1cm}
+%\pretitle{\begin{center}\begin{bfseries}\Large}
+%\posttitle{\par\end{bfseries}\end{center}}
+%\preauthor{\begin{center}\normalsize}
+%\postauthor{\par\end{center}\vspace{-1.8cm}}
+
+%\usepackage{hyperref}
+%\usepackage{bookmark}
+%\usepackage{csquotes}
+
+%%\usepackage{standalone}
+%
+%\usepackage{docmute}
+
+\title{Proceedings of the}
+\author{A. N. Editor}
+\date{29 February, 2000}
+%\title{}
+
+\makeatletter
+\let\document\c@ladocument\begingroup%
+%\makeatletter
+%\makeatletter
+%\let\oldsection\section
+%% keep exam’s definition of \section
+%\renewcommand{\section}{%
+%% article’s definition of \section
+%\@startsection{section}{1]{\z@}%
+%{-3.5ex \@plus -1ex \@minus -.2ex}%
+%{2.3ex \@plus .2ex}%
+%{\normalfont\Large\bfseries}}
+%\makeatletter
+%\makeatletter
+%\let\oldsection\section
+%% keep exam’s definition of \section
+%\renewcommand{\section}{%
+%% article’s definition of \section
+%\@startsection{section}[1]{\z@}%
+%{-3.5ex \@plus -1ex \@minus -.2ex}%
+%{2.3ex \@plus .2ex}%
+%{\normalfont\Large\bfseries}}
+\makeatletter
+\begin{document}
+%\let\section\oldsection
+%\pagestyle{combine}
+
+%\title{Коллекция отчётов на \today}
+
+%\author{Григорьев С.В., Кутуев В.А}
+
+%\newpage
+%\begin{papers}
+%\input{Иванов_Иван_Иванович/Иванов_Иван_Иванович_отчёт.tex}% or \include
+%\input{Эталон_Идеал_Примерович/Эталон_Идеал_Примерович_отчёт.tex}% or \include
+%\import{Иванов_Иван_Иванович/Иванов_Иван_Иванович_отчёт}
+%\end{papers}
+%\section{Editor’s introduction} \label{intro}
+% into main ToC (section 1)
+%In the article by A.~N.~Author on page~\pageref{art1} ...
+\let\section\oldsection
+\begin{papers}
+%\coltoctitle{An article}
+%\coltocauthor{A.~N.~Author}
+%\label{art1}
+\import{Иванов_Иван_Иванович/Иванов_Иван_Иванович_отчёт}
+% start of individual articles/papers
+% first article title into main ToC
+% first authors into main ToC
+% first article, may have own ToC,
+% bibliography, etc.
+%\coltoctitle{Another article}
+%\coltocauthor{A.~N.~Other}
+%\label{art2}
+%\import{art2}
+\end{papers}
+\makeatletter
+\let\@enddocumenthook\@oldenddocumenthook
+\makeatother
+\end{document}
+%\makeatletter
+%\let\@enddocumenthook\@oldenddocumenthook
+%\makeatother
