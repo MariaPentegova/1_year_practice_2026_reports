@@ -1,17 +1,12 @@
 \documentclass[a4paper]{article}
-
 \usepackage[a4paper, top=8mm, bottom=8mm, left=8mm, right=8mm]{geometry}
-
 \usepackage{polyglossia}
 \setdefaultlanguage[babelshorthands=true]{russian}
 \setotherlanguage{english}
-
 \usepackage{fontspec}
 \setmainfont{FreeSerif}
 \newfontfamily{\russianfonttt}[Scale=0.7]{DejaVuSansMono}
-
 \usepackage[tiny, compact]{titlesec}
-
 \usepackage{titling}
 \setlength{\droptitle}{-1cm}
 \pretitle{\begin{center}\begin{bfseries}\Large}
@@ -33,7 +28,7 @@
 \maketitle
 
 \begin{flushright}
-    Группа: \emph\enquote <25>.<Б/41><{группа в формате \enquote{<год поступления>.<Б/М><номер группы>-мм}}
+    Группа: \emph{группа в формате \enquote{<год поступления>.<Б/М><номер группы>-мм}}
 
     Кафедра: \emph{кафедра, на которой планируется защита/сдача работы}
 
