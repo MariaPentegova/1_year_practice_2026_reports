@@ -1,50 +1,45 @@
 % !TEX program = xelatex
-% Данный файл распространяется под лицензией CC BY 4.0.
-% Текст лицензии размещён на https://creativecommons.org/licenses/by/4.0/
 % (c) Кафедра системного программирования, 2026
 
 \documentclass[a4paper,12pt]{article}
 
-% ---------- Геометрия ----------
-\usepackage[a4paper, top=2cm, bottom=2cm, left=2.5cm, right=2cm]{geometry}
+\usepackage[a4paper,top=1.7cm,bottom=1.7cm,left=2.2cm,right=1.7cm]{geometry}
 
-% ---------- Языки и шрифты ----------
+\usepackage{fontspec}
 \usepackage{polyglossia}
 \setdefaultlanguage[babelshorthands=true]{russian}
 \setotherlanguage{english}
 
-\usepackage{fontspec}
 \setmainfont{FreeSerif}
 \setmonofont{DejaVuSansMono}
 
-% ---------- Интервалы ----------
 \usepackage{parskip}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.5em}
+\setlength{\parskip}{0.25em}
 
-% ---------- Заголовки ----------
 \usepackage{titlesec}
-\titlespacing*{\section}{0pt}{1.5em}{0.8em}
-\titlespacing*{\subsection}{0pt}{1.2em}{0.6em}
-\titlespacing*{\subsubsection}{0pt}{1em}{0.5em}
+\titlespacing*{\section}{0pt}{0.8em}{0.35em}
+\titlespacing*{\subsection}{0pt}{0.5em}{0.25em}
 
-% ---------- Ссылки ----------
 \usepackage{hyperref}
 \usepackage{bookmark}
-\usepackage{csquotes}
-
-% ---------- Таблицы и плавающие объекты ----------
 \usepackage{array}
 \usepackage{booktabs}
-\usepackage{float}   % нужно для [H]
+\usepackage{float}
 
-% ---------- Титул ----------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
 \usepackage{titling}
 \pretitle{\begin{center}\bfseries\Large}
 \posttitle{\par\end{center}}
 \preauthor{\begin{center}\normalsize}
 \postauthor{\par\end{center}}
-\setlength{\droptitle}{-1.5cm}
+\setlength{\droptitle}{-1.2cm}
 
 \title{Анализ графов}
 \author{Пентегова Мария Сергеевна}
@@ -55,175 +50,164 @@
 \maketitle
 
 \begin{flushright}
-    Группа: \emph{25.Б41-мм} \\
-    Кафедра: \emph{системного программирования} \\
-    Научный руководитель: \emph{Григорьев Семён Вячеславович} \\
-    Номер семестра практики: \emph{2}
+Группа: \emph{25.Б41-мм} \\
+Кафедра: \emph{системного программирования} \\
+Научный руководитель: \emph{Григорьев Семён Вячеславович} \\
+Номер семестра практики: \emph{2}
 \end{flushright}
 
 \section{Введение}
 
-BFS — один из фундаментальных алгоритмов на графах, применяемый в социальных
-сетях, веб-поиске и анализе транспортных сетей. С ростом объёмов данных
-классические реализации BFS на больших графах работают недостаточно быстро,
-поэтому возникает потребность в высокопроизводительных библиотеках, таких
-как SuiteSparse:GraphBLAS, основанных на линейной алгебре.
+BFS (Breadth-First Search, поиск в ширину) --- фундаментальный
+алгоритм обработки графов, позволяющий находить расстояния от источника
+до достижимых вершин в невзвешенном графе. Для больших разреженных
+графов существенное значение имеет эффективное представление данных и
+реализация обхода. В работе сравниваются классический BFS на основе
+очереди и CSR с матричной реализацией на базе SuiteSparse:GraphBLAS.
 
 \section{Постановка задачи}
 
-\textbf{Цель работы} — сравнить производительность классической (очередь
-и CSR) и матричной (GraphBLAS) реализаций BFS на графах различных типов:
-социальных сетях, дорожных сетях, веб-графах и графах цитирования.
+\textbf{Цель работы} --- сравнить производительность классической и
+GraphBLAS-реализаций BFS на графах различных типов.
 
 \textbf{Задачи:}
 \begin{enumerate}
-    \item реализовать классический и матричный BFS (один и несколько источников);
-    \item реализовать чтение \texttt{.mtx}, преобразование в CSR, поиск вершины
-    с максимальной степенью, замер времени;
-    \item провести эксперименты на реальных графах из коллекции SuiteSparse;
-    \item проанализировать результаты и выявить закономерности.
+    \item реализовать BFS для одного и нескольких источников;
+    \item реализовать чтение \texttt{.mtx}, преобразование в CSR и
+    поиск вершины с максимальной степенью;
+    \item провести эксперименты на реальных графах SuiteSparse;
+    \item проанализировать зависимость времени выполнения от структуры
+    графа.
 \end{enumerate}
 
-\section{Обзор}
+\section{Реализация}
 
-В литературе описаны отдельные примеры ускорения BFS через GraphBLAS,
-однако систематического сравнения классической и матричной реализаций
-на графах разных типов — как ориентированных, так и неориентированных —
-с учётом ширины фронтов BFS не проводилось. Остаётся неясным, в каких
-случаях быстрее GraphBLAS, а в каких классический BFS.
+Программа на C11 состоит из следующих компонентов:
+\texttt{utils.c/.h} --- чтение графов, списки смежности, CSR;
+\texttt{classic\_bfs.c} --- классический BFS; \texttt{graphblas\_bfs.c}
+--- BFS на основе GraphBLAS; \texttt{main.c}, \texttt{benchmark.c} ---
+запуск и измерение времени.
 
-\section{Описание предлагаемого решения}
+Для классического BFS используется формат CSR (Compressed Sparse Row).
+Список смежности вершины $v$ хранится в диапазоне
+\[
+[\texttt{row\_ptr}[v],\texttt{row\_ptr}[v+1]).
+\]
+Обход имеет сложность $O(|V|+|E|)$, а обработка соседей вершины ---
+$O(\deg(v))$.
 
-Решение — программа на C из четырёх компонентов:
+Матричная реализация использует SuiteSparse:GraphBLAS --- реализацию
+C API GraphBLAS для операций над разреженными матрицами.
 
-\begin{itemize}
-    \item \textbf{Модуль работы с графом} (\texttt{utils.c}, \texttt{utils.h}) —
-    чтение графа из \texttt{.mtx}, хранение списков смежности, преобразование
-    в CSR, поиск вершины с максимальной степенью.
-    \item \textbf{Классический BFS} (\texttt{classic\_bfs.c}) — обход
-    на очереди и CSR (один и несколько источников).
-    \item \textbf{GraphBLAS BFS} (\texttt{graphblas\_bfs.c}) — обход через
-    матрично-векторное умножение (один и несколько источников).
-    \item \textbf{Точка входа и бенчмарк} (\texttt{main.c}, \texttt{benchmark.c}) —
-    запуск всех четырёх реализаций, замер времени, вывод результатов.
-\end{itemize}
-
-\subsection{Используемые технологии}
-
-\begin{itemize}
-    \item \textbf{Язык:} C11.
-    \item \textbf{Библиотека:} SuiteSparse:GraphBLAS (сборка из исходников).
-    \item \textbf{Система сборки:} CMake 3.10+.
-    \item \textbf{Измерение времени:} \texttt{clock\_gettime()}
-    с \texttt{CLOCK\_MONOTONIC}.
-    \item \textbf{Тестирование:} CTest.
-\end{itemize}
-
-\subsection{Формат хранения графа}
-
-Выбран \textbf{CSR (Compressed Sparse Row)}: компактное хранение
-разреженных графов за счёт массивов \texttt{row\_ptr} и \texttt{col\_idx},
-быстрый доступ к соседям за $O(\deg(v))$, прямой импорт в GraphBLAS.
+Используемые технологии: C11, CMake 3.10+, SuiteSparse:GraphBLAS,
+CTest, \texttt{assert.h}. Время измеряется функцией
+\texttt{clock\_gettime()} с \texttt{CLOCK\_MONOTONIC}, что соответствует
+POSIX-интерфейсу.
 
 \section{Эксперименты}
 
-\subsection{Цель экспериментов}
+Эксперименты проведены на 7 реальных графах из SuiteSparse Matrix
+Collection Для однопоточного эксперимента
+с одним источником выбиралась вершина с максимальной степенью. Для
+multisource использовались четыре равномерно распределённых источника.
 
-Проверить, что производительность BFS зависит не только от размера графа,
-но и от его топологии, и определить, когда быстрее классика, а когда GraphBLAS.
-
-\subsection{Методика проведения}
-
-Эксперименты проводились на 7 реальных графах из коллекции SuiteSparse.
-Для каждого графа выбиралась стартовая вершина с максимальной степенью
-(один источник) и четыре равномерно распределённые вершины (несколько
-источников).
-
-Каждый алгоритм запускался \textbf{10 раз}; фиксировались среднее (Avg),
-минимальное (Min) и максимальное (Max) время в микросекундах
-(\texttt{clock\_gettime()}, \texttt{CLOCK\_MONOTONIC}). Перед замерами
-выполнялся один дополнительный запуск для исключения разовых издержек
-инициализации потоков GraphBLAS.
-
-\subsection{Результаты}
-
-Сводная таблица средних значений по 10 запускам (время в микросекундах):
+Каждая реализация запускалась 10 раз. Для каждого набора измерялись
+среднее, минимальное и максимальное время. Перед измерениями выполнялся
+дополнительный прогревочный запуск.
 
 \begin{table}[H]
 \centering
-\small
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{|l|r|r|r|r|r|}
-\hline
-\textbf{Граф} & \textbf{Classic Parent} & \textbf{Classic Multi} &
-\textbf{GB Level} & \textbf{GB Multi} & \textbf{Ускорение} \\
-\hline
-com-Orkut        & 2\,652\,628 & 2\,700\,768 & 486\,500   & 420\,307   & 5.45x (GB) \\
-soc-LiveJournal1 & 1\,915\,627 & 1\,976\,468 & 358\,255   & 331\,458   & 5.35x (GB) \\
-road\_usa        & 1\,451\,387 & 1\,588\,466 & 25\,839\,879 & 22\,121\,848 & 0.06x (Classic) \\
-roadNet-CA       & 127\,543   & 110\,558   & 663\,630   & 670\,218   & 0.19x (Classic) \\
-web-Google       & 100\,233   & 80\,683    & 101\,149   & 106\,972   & 0.99x (равно) \\
-cit-Patents      & 17\,500    & 4\,730     & 181\,639   & 46\,757    & 0.10x (Classic) \\
-com-Amazon       & 38\,967    & 31\,974    & 61\,923    & 62\,144    & 0.63x (Classic) \\
-\hline
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrr}
+\toprule
+Граф & CP & CM & GB-L & GB-M & CP/GB-L \\
+\midrule
+com-Orkut        & 2652628 & 2700768 & 486500   & 420307   & 5.45x \\
+soc-LiveJournal1 & 1915627 & 1976468 & 358255   & 331458   & 5.35x \\
+road\_usa        & 1451387 & 1588466 & 25839879 & 22121848 & 0.06x \\
+roadNet-CA       & 127543  & 110558  & 663630   & 670218   & 0.19x \\
+web-Google       & 100233  & 80683   & 101149   & 106972   & 0.99x \\
+cit-Patents      & 17500   & 4730    & 181639   & 46757    & 0.10x \\
+com-Amazon       & 38967   & 31974   & 61923    & 62144    & 0.63x \\
+\bottomrule
 \end{tabular}
-\caption{Средние значения времени выполнения (мкс) по 10 запускам}
+\caption{Среднее время BFS по 10 запускам, мкс.
+CP --- Classic Parent, CM --- Classic Multi,
+GB-L --- GraphBLAS Level, GB-M --- GraphBLAS Multi.}
+\label{tab:results}
 \end{table}
 
 \subsection{Анализ результатов}
 
-Универсального решения нет — выбор алгоритма зависит от трёх факторов
-в порядке иерархии:
+На \texttt{com-Orkut} и \texttt{soc-LiveJournal1} GraphBLAS показал
+меньшее среднее время: 486\,500 и 358\,255 мкс против 2\,652\,628 и
+1\,915\,627 мкс у Classic Parent.
+
+На дорожных графах результат противоположный. Для
+\texttt{road\_usa} классический BFS выполнялся за 1\,451\,387 мкс
+против 25\,839\,879 мкс у GraphBLAS, а для \texttt{roadNet-CA} ---
+127\,543 против 663\,630 мкс.
+
+На \texttt{web-Google} времена близки: 100\,233 и 101\,149 мкс.
+На \texttt{cit-Patents} и \texttt{com-Amazon} классическая реализация
+также быстрее. В частности, для \texttt{cit-Patents} получено
+17\,500 против 181\,639 мкс.
+
+Таким образом, на исследованной выборке GraphBLAS быстрее на двух
+графах, классический BFS --- на четырёх, а на одном результаты близки.
+Это указывает на зависимость производительности от структуры графа,
+а не только от числа вершин и рёбер. Для анализа влияния ширины фронта
+BFS необходимо дополнительно измерять число вершин на каждом уровне.
+
+\section{Тестирование и заключение}
+
+Корректность проверяется с помощью CTest и \texttt{assert.h} на
+тестовом графе из 5 вершин. Проверяются посещение вершин, расстояния,
+родители, результаты multisource-обхода и поэлементное соответствие
+классической и GraphBLAS-реализаций. Все тесты проходят успешно
+(\texttt{100\% passed}).
+
+В работе реализованы и сравнены два подхода к BFS: классический обход
+с очередью и CSR и матричный подход на основе SuiteSparse:GraphBLAS.
+Эксперименты на семи реальных графах показали, что производительность
+зависит от структуры графа. GraphBLAS оказался быстрее на двух
+социальных графах, классическая реализация --- на четырёх графах,
+а на \texttt{web-Google} результаты были близки. Ориентированность
+графа сама по себе не объясняет различия производительности.
+
+Полученные результаты относятся к использованному набору графов и
+условиям эксперимента. Для более детального исследования необходимо
+учитывать характеристики фронта BFS на каждом уровне.
+
+Репозиторий:
+\url{https://github.com/MariaPentegova/graph_blas_bfs-2}
+
+\section{Список использованных источников}
 
 \begin{enumerate}
-    \item \textbf{Ширина фронтов BFS} — главный фактор: широкие фронты
-    (социальные сети) → GraphBLAS; узкие (дорожные сети, графы цитирования)
-    → классика.
-    \item \textbf{Размер графа} (число рёбер): огромные графы (> 50M рёбер)
-    → GraphBLAS при широких фронтах; маленькие и средние (< 5M рёбер)
-    → классика из-за накладных расходов GraphBLAS.
-    \item \textbf{Топология} — социальные сети дают широкие фронты,
-    дорожные сети и графы цитирования — узкие.
+    \item IEEE Std 1003.1-2017. \textit{POSIX.1-2017:
+    System Interfaces}. The Open Group.
+    \url{https://pubs.opengroup.org/onlinepubs/9699919799/}.
+
+    \item GHOST966. \textit{Алгоритмы на графах: BFS --- поиск
+    в ширину}. Хабр, 2025.
+    \url{https://habr.com/ru/articles/969450/}.
+
+    \item Intel Corporation. \textit{Intel oneMKL:
+    Sparse Storage Formats}. 2025.
+    \url{https://www.intel.com/content/www/us/en/docs/onemkl/developer-reference-dpcpp/2025-2/sparse-storage-formats.html}.
+
+    \item GraphBLAS Forum. \textit{The GraphBLAS C API Specification}.
+    Version 2.1, 2023.
+    \url{https://graphblas.org/docs/GraphBLAS_API_C_v2.1.0.pdf}.
+
+    \item Davis T. A. \textit{SuiteSparse:GraphBLAS}.
+    ACM Transactions on Mathematical Software, 2023.
+    \url{https://github.com/DrTimothyAldenDavis/GraphBLAS}.
+
+    \item \textit{SuiteSparse Matrix Collection}.
+    \url{https://sparse.tamu.edu/}.
 \end{enumerate}
-
-Отдельно стоит отметить граф \texttt{cit-Patents}: он ориентированный,
-но классика выиграла с большим отрывом. Значит, ориентированность сама
-по себе не гарантирует победу GraphBLAS.
-
-\subsection{Тестирование корректности}
-
-Тесты (\texttt{assert.h}, CTest) проверяют обе реализации на графе
-из 5 вершин.
-
-\begin{itemize}
-    \item \textbf{Classic BFS:} все вершины посещены, корень указывает
-    на себя, у не-корневых нет петель, родители совпадают с ожидаемыми
-    для стартов 0 и 1; в multisource все источники указывают на себя.
-    \item \textbf{GraphBLAS BFS:} все вершины посещены, расстояние до старта
-    равно 0, уровни совпадают с ожидаемыми, каждая вершина имеет соседа
-    на уровень выше; в multisource расстояния не больше, чем при обходе
-    от одного источника.
-    \item \textbf{Сравнительные тесты:} результаты классики и GraphBLAS
-    совпадают поэлементно.
-\end{itemize}
-
-Все тесты проходят (100\% passed), что подтверждает корректность обеих
-реализаций и их эквивалентность.
-
-\section{Заключение}
-
-\begin{itemize}
-    \item Производительность BFS зависит от топологии графа и ширины
-    фронтов, а не только от размера.
-    \item GraphBLAS максимально эффективен на больших ориентированных
-    графах с широкими фронтами.
-    \item Классический BFS быстрее на графах с узкими фронтами и на
-    маленьких графах.
-    \item Ориентированность не гарантирует эффективность GraphBLAS 
-\end{itemize}
-
-Репозиторий: \url{https://github.com/MariaPentegova/graph_blas_bfs-2/}
-
-Техническая документация: \url{https://github.com/MariaPentegova/graph_blas_bfs-2/blob/main/README.md}
 
 \end{document}
