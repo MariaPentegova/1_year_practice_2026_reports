@@ -111,7 +111,7 @@ CTest и POSIX-функция \texttt{clock\_gettime()} с
 \section{Эксперимент}
 
 Для экспериментов выбраны семь графов из SuiteSparse Matrix Collection.
-Для однопоточного BFS в качестве источника выбиралась вершина с
+Для однократного BFS в качестве источника выбиралась вершина с
 максимальной степенью. Для multisource BFS использовались четыре
 равномерно распределённых источника. Перед измерениями выполнялся
 дополнительный прогревочный запуск, после чего каждая реализация
@@ -206,7 +206,8 @@ GB-L --- GraphBLAS Level, GB-M --- GraphBLAS Multisource.}
 проверяют посещение вершин, вычисление расстояний, построение
 родительского дерева, работу multisource BFS, а также соответствие
 результатов классической и GraphBLAS-реализаций. Все тесты проходят
-успешно (\texttt{100% passed}).
+успешно (\texttt{100\% passed}).
+.
 
 В работе реализованы четыре варианта BFS: классический BFS с
 построением дерева обхода, классический multisource BFS, GraphBLAS BFS
@@ -220,7 +221,7 @@ GB-L --- GraphBLAS Level, GB-M --- GraphBLAS Multisource.}
 выполнения от структуры графа. На \texttt{com-Orkut} и
 \texttt{soc-LiveJournal1} GraphBLAS BFS оказался быстрее классического
 варианта примерно в 5.45 и 5.35 раза соответственно. На
-\texttt{road_usa}, \texttt{roadNet-CA}, \texttt{cit-Patents} и
+\texttt{road\_usa}, \texttt{roadNet-CA}, \texttt{cit-Patents} и
 \texttt{com-Amazon} классическая реализация оказалась быстрее. На
 \texttt{web-Google} времена двух подходов были близки.
 
