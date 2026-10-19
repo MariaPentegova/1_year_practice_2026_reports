@@ -215,21 +215,21 @@ S = \frac{T_{\mathrm{CSR}}}{T_{\mathrm{GB}}},
 \begin{table}[H]
 \centering
 \small
-\caption{Характеристики обхода и ускорение GraphBLAS; графы упорядочены по числу рёбер на уровень при обходе из одной вершины}
+\caption{Характеристики процессов обхода графов}
 \label{tab:traversal}
-\begin{tabular}{lrrrrrr|rr}
+\begin{tabular}{lrrrrrr|r}
 \toprule
-Граф & \multicolumn{6}{c|}{Single-source} & \multicolumn{2}{c}{Multisource} \\
-\cmidrule(lr){2-7} \cmidrule(lr){8-9}
- & Достигнуто, \% & Уровней & Рёбер на уровень & MTEPS, CSR & MTEPS, GB & $S$ & Рёбер на уровень & $S$ \\
+Граф & \multicolumn{5}{c|}{Single-source} & \multicolumn{1}{c}{Multisource} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-7}
+ & Достигнуто, \% & Уровней & Рёбер на уровень & MTEPS, CSR & MTEPS, GB & Рёбер на уровень \\
 \midrule
-\texttt{roadNet-CA} & 99,28 & 727 & 7\,594 & 76,1 & 21,0 & 0,28 & 15\,421 & 0,26 \\
-\texttt{road\_usa} & 100,00 & 6\,809 & 8\,475 & 59,6 & 11,7 & 0,20 & 12\,821 & 0,15 \\
-\texttt{cit-Patents} & 3,35 & 14 & 15\,223 & 28,8 & 3,4 & 0,12 & 5\,193 & 0,15 \\
-\texttt{com-Amazon} & 100,00 & 29 & 63\,853 & 44,3 & 31,6 & 0,71 & 57\,867 & 0,53 \\
-\texttt{web-Google} & 65,53 & 30 & 129\,140 & 50,6 & 45,8 & 0,91 & 121\,071 & 0,46 \\
-\texttt{soc-LiveJournal1} & 90,77 & 14 & 4\,869\,698 & 52,7 & 222,7 & \textbf{4,22} & 4\,545\,051 & \textbf{4,67} \\
-\texttt{com-Orkut} & 100,00 & 7 & 33\,481\,452 & 136,3 & 413,3 & \textbf{3,03} & 29\,296\,271 & \textbf{3,51} \\
+\texttt{roadNet-CA}       & 99,28  & 727   & 7\,594       & 76,1  & 21,0  & 15\,421     \\
+\texttt{road\_usa}        & 100,00 & 6\,809 & 8\,475       & 59,6  & 11,7  & 12\,821     \\
+\texttt{cit-Patents}      & 3,35   & 14    & 15\,223      & 28,8  & 3,4   & 5\,193      \\
+\texttt{com-Amazon}       & 100,00 & 29    & 63\,853      & 44,3  & 31,6  & 57\,867     \\
+\texttt{web-Google}       & 65,53  & 30    & 129\,140     & 50,6  & 45,8  & 121\,071    \\
+\texttt{soc-LiveJournal1} & 90,77  & 14    & 4\,869\,698  & 52,7  & 222,7 & 4\,545\,051 \\
+\texttt{com-Orkut}        & 100,00 & 7     & 33\,481\,452 & 136,3 & 413,3 & 29\,296\,271\\
 \bottomrule
 \end{tabular}
 \end{table}
