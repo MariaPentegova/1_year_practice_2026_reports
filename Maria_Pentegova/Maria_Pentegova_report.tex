@@ -226,7 +226,7 @@
 
 \section{Заключение}
 
-В работе реализованы четыре варианта parent-BFS: два классических (single-source и multisource) и два на \texttt{GraphBLAS} (single-source и multisource). Во всех четырёх граф хранится в CSR. Кроме того, у \texttt{GraphBLAS} есть две level-версии (single-source и multisource), которые возвращают массив уровней \texttt{level} и используются в тестах. Все варианты проверены тестами. Для parent-версий тесты проверяют инварианты дерева предков, для level-версий~--- уровни. Кроме того, результаты \texttt{GraphBLAS} сравниваются с результатами классического BFS и с эталонными значениями на тестовом графе.
+В работе реализованы четыре варианта parent-BFS: два классических (single-source и multisource) и два на \texttt{GraphBLAS} (single-source и multisource). Во всех четырёх вариантах граф хранится в CSR. Также у \texttt{GraphBLAS} реализованы две level-версии (single-source и multisource), которые возвращают массив уровней \texttt{level}. Все варианты проверены тестами. Для parent-версий тесты проверяют инварианты дерева предков, для level-версий~--- уровни. Результаты \texttt{GraphBLAS} сравниваются с результатами классического BFS и с эталонными значениями на тестовом графе.
 
 Замеры на 7 графах из \texttt{SuiteSparse Matrix Collection} показали, что выбор подхода зависит от топологии:
 \begin{itemize}
