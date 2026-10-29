@@ -202,6 +202,7 @@
 Для сборки проекта необходимы компилятор C/C++, CMake, библиотеки Boost и GraphBLAS. Проект строго протестирован со спецификацией \texttt{SuiteSparse:GraphBLAS 10.5.1}. Более старые версии (например, 7.х из стандартных репозиториев ряда дистрибутивов Linux) не поддерживаются из-за несовместимости API.
 
 Для сборки актуальной версии GraphBLAS из исходных кодов:
+
 \begin{verbatim}
 wget https://github.com/DrTimothyAldenDavis/GraphBLAS/archive/refs/tags/v10.5.1.tar.gz
 tar -xzf v10.5.1.tar.gz
@@ -214,33 +215,39 @@ sudo ldconfig
 \end{verbatim}
 
 \textbf{Шаг 2. Клонирование репозитория проекта.}
+
 \begin{verbatim}
 git clone https://github.com/MariaPentegova/graph_analysis_BFS.git
 cd graph_blas_bfs-2
 \end{verbatim}
 
 \textbf{Шаг 3. Компиляция исходного кода.}
+
 \begin{verbatim}
 mkdir build
 cd build
 cmake ..
 cmake --build .
 \end{verbatim}
+
 После успешного выполнения команд в директории \texttt{build} будут созданы исполняемые файлы \texttt{bfs\_analysis}, \texttt{bfs\_benchmark} и исполняемые файлы тестов.
 
 \textbf{Шаг 4. Запуск аналитической утилиты.}
 Для проведения автоматического анализа графа запустите утилиту \texttt{bfs\_analysis}, передав путь к целевому файлу в формате \texttt{.mtx}:
+
 \begin{verbatim}
 ./bfs_analysis ../graphs/название_графа.mtx
 \end{verbatim}
 Программа выполнит обход от вершины с максимальной степенью, выведет расчетные метрики и напечатает обоснованную рекомендацию (\texttt{Classic BFS} или \texttt{GraphBLAS}) с указанием сработавшей ступени правила.
 
 Для запуска обхода с произвольной вершины (например, с ID 42) передайте её номер вторым аргументом:
+
 \begin{verbatim}
 ./bfs_analysis ../graphs/название_графа.mtx 42
 \end{verbatim}
 
 Для запуска автоматической верификации и подсистемы тестов выполните в папке \texttt{build}:
+
 \begin{verbatim}
 ctest
 \end{verbatim}
